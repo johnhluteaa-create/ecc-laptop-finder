@@ -595,6 +595,7 @@ function renderCard(p) {
 function showResults() {
   const budgetRange = state.budget ? BUDGETS[state.budget] : null;
 
+  // Exact match: all filters applied
   const matches = PRODUCTS.filter(p => {
     if (p.status !== 'ACTIVE') return false;
     if (budgetRange) {
@@ -609,21 +610,61 @@ function showResults() {
   section.classList.remove('hidden');
 
   if (matches.length === 0) {
+    // Fallback 1: relax budget only, keep type + usecase
+    let fallback = PRODUCTS.filter(p => {
+      if (p.status !== 'ACTIVE') return false;
+      if (state.type && p.product_type !== state.type) return false;
+      if (state.usecase && !p.use_cases.includes(state.usecase)) return false;
+      return true;
+    });
+
+    // Fallback 2: relax type too, keep usecase
+    if (fallback.length === 0) {
+      fallback = PRODUCTS.filter(p => {
+        if (p.status !== 'ACTIVE') return false;
+        if (state.usecase && !p.use_cases.includes(state.usecase)) return false;
+        return true;
+      });
+    }
+
+    // Fallback 3: show all active products
+    if (fallback.length === 0) {
+      fallback = PRODUCTS.filter(p => p.status === 'ACTIVE');
+    }
+
     const askMsg =
       'မင်္ဂလာပါ ဆရာ 🙏\n' +
       'ECC Laptop Finder မှ ဆက်သွယ်နေပါသည်။\n\n' +
       (state.budget ? '💰 Budget: ' + state.budget + '\n' : '') +
       (state.type ? '💻 Type: ' + state.type + '\n' : '') +
       (state.usecase ? '📌 Use Case: ' + state.usecase + '\n' : '') +
-      '\nဆရာ့ recommendation ထပ်မေးချင်ပါတယ် 🙏';
+      '\nဒီ filter အတွက် ဆရာ့ recommendation ထပ်မေးချင်ပါတယ် 🙏';
+
+    // Build budget note
+    const budgetTypeLabel = {
+      'BRAND_NEW_LAPTOP': 'Brand New Laptop',
+      'USED_LAPTOP': 'Used Laptop',
+      'DESKTOP': 'Desktop',
+    };
+    let noMatchNote = '';
+    if (state.budget && state.type) {
+      noMatchNote = `⚠️ <strong>${state.budget}</strong> budget မှာ <strong>${budgetTypeLabel[state.type] || state.type}</strong> ရှာမတွေ့ပါ။`;
+    } else if (state.budget) {
+      noMatchNote = `⚠️ <strong>${state.budget}</strong> budget filter အတွက် exact match မတွေ့ပါ။`;
+    }
 
     section.innerHTML = `
-      <div class="no-res">
+      <div class="no-res" style="margin-bottom:16px">
         <div class="no-res-icon">🔍</div>
-        <div class="no-res-t">ရှာမတွေ့သေးပါ</div>
-        <div class="no-res-p">ဒီ budget/use case အတွက် ဆရာ စစ်ဆေးနေဆဲပါ။<br>WhatsApp မှာ ဆက်မေးပေးပါနော်။</div>
-        <a href="${waLink(askMsg)}" target="_blank" rel="noopener" class="btn-wa-lg">💬 ဆရာ့ကို WhatsApp မှာ မေးမည်</a>
-      </div>`;
+        <div class="no-res-t">Exact match မတွေ့ပါ</div>
+        <div class="no-res-p">${noMatchNote}<br>ဒါပေမဲ့ ဆရာ့ closest alternatives ကြည့်ပါ 👇</div>
+        <a href="${waLink(askMsg)}" target="_blank" rel="noopener" class="btn-wa-lg" style="margin-top:10px">💬 Budget ပြောပြီး ဆရာ့ မေးမည်</a>
+      </div>
+      <div class="r-header">
+        <div class="r-title">🔄 Closest Recommendations</div>
+        <div class="r-count">${fallback.length} product${fallback.length !== 1 ? 's' : ''}</div>
+      </div>
+      ${fallback.map(renderCard).join('')}`;
   } else {
     section.innerHTML = `
       <div class="r-header">
