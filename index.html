@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+  <title>ECC Laptop Recommendation Finder</title>
+  <meta name="description" content="ECC Computer Training Centre ‚Äî Budget ·Äî·Ä≤·Ä∑ use case ·ÄÄ·Äº·Ää·Ä∑·Ä∫·Äï·Äº·ÄÆ·Ä∏ ·ÄÜ·Äõ·Ä¨·Ä∑ laptop recommendation ·Äõ·Äï·Ä´·Äû·Ää·Ä∫" />
+
+  <style>
+    :root {
+      --red: #CC1F2B;
+      --red-dark: #a51825;
+      --red-light: #fdf0f1;
+      --navy: #1a2744;
+      --white: #fff;
+      --bg: #f5f6f8;
+      --border: #e5e7eb;
+      --text: #1a1a2e;
+      --muted: #6b7280;
+      --green: #10b981;
+      --wa: #25D366;
+      --warn-bg: #fffbeb;
+      --warn-border: #f59e0b;
+      --shadow: 0 2px 12px rgba(0,0,0,0.08);
+      --r: 12px;
+      --r-sm: 8px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{font-size:16px;-webkit-text-size-adjust:100%}
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Noto Sans Myanmar',Arial,sans-serif;
+      background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh;
+    }
+    a{color:inherit;text-decoration:none}
+    button{cursor:pointer;border:none;background:none;font-family:inherit}
+    img{max-width:100%;height:auto;display:block}
+
+    /* Layout */
+    .wrap{max-width:520px;margin:0 auto;min-height:100vh;background:var(--bg);position:relative}
+
+    /* Header */
+    .header{
+      background:var(--red);color:#fff;padding:16px 20px 20px;
+      position:sticky;top:0;z-index:100;
+      box-shadow:0 2px 8px rgba(204,31,43,0.3);
+    }
+    .header-top{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+    .logo{
+      width:36px;height:36px;background:#fff;color:var(--red);
+      border-radius:8px;display:flex;align-items:center;justify-content:center;
+      font-weight:900;font-size:13px;flex-shrink:0;letter-spacing:-1px;
+    }
+    .h-title{font-size:15px;font-weight:700;line-height:1.3}
+    .h-sub{font-size:12px;opacity:.88;margin-top:2px}
+
+    /* Profile card */
+    .profile{
+      background:#fff;margin:14px 16px 0;border-radius:var(--r);
+      padding:14px 16px;display:flex;align-items:flex-start;gap:14px;
+      box-shadow:var(--shadow);border:1px solid var(--border);
+    }
+    .profile img{
+      width:52px;height:52px;border-radius:50%;
+      border:2.5px solid var(--red);object-fit:cover;flex-shrink:0;
+    }
+    .p-name-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:2px}
+    .p-name{font-size:14px;font-weight:700;color:var(--navy)}
+    .p-badge{
+      background:var(--red);color:#fff;font-size:10px;font-weight:600;
+      padding:2px 8px;border-radius:20px;
+    }
+    .p-role{font-size:11px;color:var(--muted)}
+    .p-trust{font-size:11.5px;color:var(--text);margin-top:6px;line-height:1.5;opacity:.82}
+
+    /* Filters */
+    .filters{padding:14px 16px}
+    .filter-card{
+      background:#fff;border-radius:var(--r);padding:18px 16px;
+      box-shadow:var(--shadow);border:1px solid var(--border);
+    }
+    .f-group{margin-bottom:18px}
+    .f-label{
+      font-size:13px;font-weight:700;color:var(--navy);
+      margin-bottom:10px;display:flex;align-items:center;gap:6px;
+    }
+    .chips{display:flex;flex-wrap:wrap;gap:8px}
+    .chip{
+      padding:7px 14px;border-radius:20px;border:1.5px solid var(--border);
+      font-size:13px;font-weight:500;color:var(--text);background:var(--bg);
+      transition:all .15s;cursor:pointer;user-select:none;line-height:1.3;
+    }
+    .chip:hover{border-color:var(--red);color:var(--red);background:var(--red-light)}
+    .chip.on{background:var(--red);color:#fff;border-color:var(--red);font-weight:600}
+    .divider{height:1px;background:var(--border);margin:18px 0}
+    .cta{
+      width:100%;padding:14px;background:var(--red);color:#fff;
+      font-size:15px;font-weight:700;border-radius:var(--r-sm);margin-top:18px;
+      transition:background .15s;letter-spacing:.2px;
+    }
+    .cta:hover{background:var(--red-dark)}
+    .cta:active{transform:scale(.98)}
+
+    /* Results */
+    .results{padding:0 16px 100px}
+    .r-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+    .r-title{font-size:15px;font-weight:700;color:var(--navy)}
+    .r-count{
+      font-size:12px;color:var(--muted);background:var(--bg);
+      border:1px solid var(--border);padding:3px 10px;border-radius:20px;
+    }
+
+    /* Card */
+    .card{
+      background:#fff;border-radius:var(--r);
+      box-shadow:var(--shadow);border:1px solid var(--border);
+      overflow:hidden;margin-bottom:16px;
+    }
+    .c-img{position:relative;width:100%;height:175px;background:var(--bg);overflow:hidden}
+    .c-img img{width:100%;height:100%;object-fit:cover}
+    .c-badges{
+      position:absolute;top:10px;left:10px;right:10px;
+      display:flex;justify-content:space-between;align-items:flex-start;
+    }
+    .b-saya{
+      background:var(--navy);color:#fff;font-size:10px;font-weight:700;
+      padding:4px 10px;border-radius:20px;
+    }
+    .b-type{
+      background:#fff;color:var(--text);font-size:10px;font-weight:600;
+      padding:4px 8px;border-radius:20px;border:1px solid var(--border);
+    }
+    .b-used{background:#f59e0b;color:#fff;border-color:#f59e0b}
+    .c-body{padding:16px}
+    .c-name{font-size:16px;font-weight:700;color:var(--navy);line-height:1.3;margin-bottom:2px}
+    .c-brand{font-size:12px;color:var(--muted);margin-bottom:12px}
+
+    /* Specs */
+    .specs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+    .spec{background:var(--bg);border-radius:var(--r-sm);padding:8px 10px}
+    .spec-l{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:600;margin-bottom:2px}
+    .spec-v{font-size:12px;font-weight:600;color:var(--text);line-height:1.3}
+    .spec-full{grid-column:1/-1}
+
+    /* Price */
+    .price-row{
+      display:flex;align-items:center;justify-content:space-between;
+      background:var(--red-light);border:1px solid rgba(204,31,43,.15);
+      border-radius:var(--r-sm);padding:10px 12px;margin-bottom:12px;
+    }
+    .price-val{font-size:18px;font-weight:800;color:var(--red)}
+    .price-note{font-size:10px;color:var(--muted);text-align:right;line-height:1.3;max-width:120px}
+
+    /* Store */
+    .store{border-top:1px solid var(--border);padding-top:12px;margin-bottom:12px}
+    .info-row{display:flex;align-items:flex-start;gap:8px;margin-bottom:6px;font-size:12.5px}
+    .i-icon{font-size:13px;margin-top:1px;flex-shrink:0;width:16px}
+    .i-text{color:var(--text);line-height:1.4}
+    .verify-note{font-size:10px;color:var(--warn-border);display:block;margin-top:1px}
+
+    /* Warranty */
+    .warranty{
+      background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;
+      padding:7px 10px;font-size:12px;color:#166534;margin-bottom:10px;
+    }
+
+    /* Risk */
+    .risk{
+      background:var(--warn-bg);border:1px solid var(--warn-border);
+      border-radius:6px;padding:8px 10px;font-size:12px;color:#92400e;
+      margin-bottom:10px;display:flex;gap:6px;align-items:flex-start;
+    }
+
+    /* Saya note */
+    .saya-note{background:var(--navy);border-radius:8px;padding:12px 14px;margin-bottom:14px}
+    .sn-label{font-size:10px;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.6px;font-weight:700;margin-bottom:5px}
+    .sn-text{font-size:13px;color:#fff;line-height:1.6}
+
+    /* Actions */
+    .actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .btn-link{
+      padding:11px;background:var(--red);color:#fff;border-radius:var(--r-sm);
+      font-size:13px;font-weight:600;text-align:center;display:flex;
+      align-items:center;justify-content:center;gap:5px;transition:background .15s;
+    }
+    .btn-link:hover{background:var(--red-dark)}
+    .btn-wa{
+      padding:11px;background:var(--wa);color:#fff;border-radius:var(--r-sm);
+      font-size:13px;font-weight:600;text-align:center;display:flex;
+      align-items:center;justify-content:center;gap:5px;transition:background .15s;
+    }
+    .btn-wa:hover{background:#1ebe5a}
+    .c-date{text-align:right;font-size:10px;color:var(--muted);margin-top:10px}
+
+    /* No results */
+    .no-res{
+      text-align:center;padding:40px 24px;background:#fff;
+      border-radius:var(--r);box-shadow:var(--shadow);border:1px solid var(--border);
+    }
+    .no-res-icon{font-size:40px;margin-bottom:12px}
+    .no-res-t{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:8px}
+    .no-res-p{font-size:13.5px;color:var(--muted);line-height:1.6;margin-bottom:16px}
+    .btn-wa-lg{
+      display:inline-flex;align-items:center;gap:6px;
+      padding:12px 24px;background:var(--wa);color:#fff;
+      border-radius:8px;font-size:14px;font-weight:600;
+    }
+
+    /* Trust */
+    .trust{padding:0 16px 16px}
+    .trust-card{
+      background:var(--warn-bg);border:1px solid var(--warn-border);
+      border-radius:var(--r);padding:14px 16px;
+    }
+    .trust-title{font-size:13px;font-weight:700;color:#92400e;margin-bottom:10px}
+    .trust-list{list-style:none}
+    .trust-list li{
+      font-size:12.5px;color:#92400e;padding:4px 0;
+      display:flex;align-items:flex-start;gap:8px;line-height:1.5;
+    }
+    .trust-list li::before{content:'‚Ä¢';flex-shrink:0;margin-top:1px;font-weight:700}
+
+    /* Footer */
+    .footer{
+      background:var(--navy);color:rgba(255,255,255,.7);
+      text-align:center;padding:16px;font-size:11.5px;line-height:1.6;
+    }
+    .footer strong{color:#fff}
+
+    /* FAB */
+    .fab{position:fixed;bottom:20px;right:20px;z-index:200}
+    .fab-pulse{
+      position:absolute;inset:-4px;border-radius:50%;
+      background:rgba(37,211,102,.3);animation:pulse 2s infinite;
+    }
+    .fab-btn{
+      width:56px;height:56px;border-radius:50%;background:var(--wa);color:#fff;
+      font-size:26px;display:flex;align-items:center;justify-content:center;
+      box-shadow:0 4px 16px rgba(37,211,102,.4);position:relative;z-index:1;
+      transition:transform .15s;cursor:pointer;border:none;
+    }
+    .fab-btn:hover{transform:scale(1.08)}
+    @keyframes pulse{
+      0%{transform:scale(1);opacity:.7}
+      70%{transform:scale(1.35);opacity:0}
+      100%{transform:scale(1.35);opacity:0}
+    }
+
+    .hidden{display:none}
+    .mt-14{margin-top:14px}
+  </style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-top">
+      <div class="logo">ECC</div>
+      <div>
+        <div class="h-title">ECC Laptop Recommendation Finder</div>
+      </div>
+    </div>
+    <div class="h-sub">Budget ·Äë·Ää·Ä∑·Ä∫·Äï·Äº·ÄÆ·Ä∏ ·ÄÜ·Äõ·Ä¨·Ä∑ recommendation ·ÄÄ·Äº·Ää·Ä∑·Ä∫·Äï·Ä´</div>
+  </header>
+
+  <!-- PROFILE -->
+  <div class="profile">
+    <img
+      src="https://ui-avatars.com/api/?name=John+Hlutea&background=CC1F2B&color=fff&size=200&bold=true"
+      alt="John Hlutea"
+      onerror="this.src='https://placehold.co/52x52/CC1F2B/fff?text=J'"
+    />
+    <div style="flex:1">
+      <div class="p-name-row">
+        <span class="p-name">John Hlutea</span>
+        <span class="p-badge">‚úì ·ÄÜ·Äõ·Ä¨</span>
+      </div>
+      <div class="p-role">Digital Trainer ¬∑ ECC Computer Training Centre, New Delhi</div>
+      <div class="p-trust">
+        ECC Computer Training Centre ·Äô·Äæ ·ÄÜ·Äõ·Ä¨ John Hlutea ·ÄÄ students ·Ä°·Äê·ÄΩ·ÄÄ·Ä∫ budget ·Äî·Ä≤·Ä∑ use case ·ÄÄ·Ä≠·ÄØ·ÄÄ·Äº·Ää·Ä∑·Ä∫·Äï·Äº·ÄÆ·Ä∏ laptop recommendation ·Äï·Ä±·Ä∏·Äë·Ä¨·Ä∏·ÄÅ·Äº·ÄÑ·Ä∫·Ä∏·Äñ·Äº·ÄÖ·Ä∫·Äû·Ää·Ä∫·Åã
+      </div>
+    </div>
+  </div>
+
+  <!-- FILTERS -->
+  <section class="filters">
+    <div class="filter-card">
+
+      <!-- Budget -->
+      <div class="f-group">
+        <div class="f-label">üí∞ Budget Range</div>
+        <div class="chips" id="budgetChips">
+          <button class="chip" data-group="budget" data-val="20000-30000">‚Çπ20,000‚Äì‚Çπ30,000</button>
+          <button class="chip" data-group="budget" data-val="30000-40000">‚Çπ30,000‚Äì‚Çπ40,000</button>
+          <button class="chip" data-group="budget" data-val="40000-50000">‚Çπ40,000‚Äì‚Çπ50,000</button>
+          <button class="chip" data-group="budget" data-val="50000+">‚Çπ50,000+</button>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Product Type -->
+      <div class="f-group">
+        <div class="f-label">üíª Product Type</div>
+        <div class="chips" id="typeChips">
+          <button class="chip" data-group="type" data-val="BRAND_NEW_LAPTOP">üíª Brand New Laptop</button>
+          <button class="chip" data-group="type" data-val="USED_LAPTOP">üîÑ Used Laptop</button>
+          <button class="chip" data-group="type" data-val="DESKTOP">üñ•Ô∏è Desktop</button>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Use Case -->
+      <div class="f-group">
+        <div class="f-label">üìå Use Case (·Äò·Ä¨·Ä°·Äê·ÄΩ·ÄÄ·Ä∫ ·Äû·ÄØ·Ä∂·Ä∏·Äô·Äú·Ä≤)</div>
+        <div class="chips" id="usecaseChips">
+          <button class="chip" data-group="usecase" data-val="basic">üìÑ Computer Basic / MS Office</button>
+          <button class="chip" data-group="usecase" data-val="online">üéì Online Class</button>
+          <button class="chip" data-group="usecase" data-val="graphic">üé® Graphic Design</button>
+          <button class="chip" data-group="usecase" data-val="video">üé¨ Video Editing</button>
+          <button class="chip" data-group="usecase" data-val="home">üè† Home Use</button>
+        </div>
+      </div>
+
+      <button class="cta" onclick="showResults()">üîç Recommendation ·ÄÄ·Äº·Ää·Ä∑·Ä∫·Äô·Äö·Ä∫</button>
+    </div>
+  </section>
+
+  <!-- RESULTS -->
+  <section class="results hidden" id="resultsSection"></section>
+
+  <!-- TRUST NOTES -->
+  <section class="trust">
+    <div class="trust-card">
+      <div class="trust-title">‚ö†Ô∏è ·Äù·Äö·Ä∫·Äö·Ä∞·Äô·Äê·Ä≠·ÄØ·ÄÑ·Ä∫·Äô·ÄÆ ·Äû·Ä≠·Äë·Ä¨·Ä∏·Äû·ÄÑ·Ä∑·Ä∫·Äû·Ää·Ä∫·Äô·Äª·Ä¨·Ä∏</div>
+      <ul class="trust-list">
+        <li>·Äà·Ä±·Ä∏·Äî·Äæ·ÄØ·Äî·Ä∫·Ä∏·Äô·Äª·Ä¨·Ä∏ ·Äî·Ä±·Ä∑·ÄÖ·Äâ·Ä∫ ·Äï·Äº·Ä±·Ä¨·ÄÑ·Ä∫·Ä∏·Äú·Ä≤·Äî·Ä≠·ÄØ·ÄÑ·Ä∫·Äû·Ää·Ä∫ ‚Äî ·Äù·Äö·Ä∫·Äö·Ä∞·Äô·Ää·Ä∑·Ä∫·Äî·Ä±·Ä∑ ·Äï·Äº·Äî·Ä∫·ÄÖ·ÄÖ·Ä∫·Äï·Ä´</li>
+        <li>Warranty ·Äï·Ä´·Äû·Ä±·Ä¨ product ·ÄÄ·Ä≠·ÄØ·Äû·Ä¨ ·Äù·Äö·Ä∫·Äï·Ä´</li>
+        <li>·ÄÑ·ÄΩ·Ä±·Äô·Äï·Ä±·Ä∏·Äô·ÄÅ·Äª·ÄÑ·Ä∫·Ä∏ product condition ·ÄÖ·ÄÖ·Ä∫·ÄÜ·Ä±·Ä∏·Äï·Ä´</li>
+        <li>Refurbished laptop ·ÄÜ·Ä≠·ÄØ·Äï·Ä´·ÄÄ battery health ·ÄÖ·ÄÖ·Ä∫·Äï·Ä´</li>
+        <li>·ÄÜ·Äõ·Ä¨·Ä∑ recommendation ·Äû·Ää·Ä∫ guidance ·Äû·Ä¨·Äñ·Äº·ÄÖ·Ä∫·Äû·Ää·Ä∫ ‚Äî final decision ·Äô·Ä≠·Äô·Ä≠·Åè·Äê·Ä¨·Äù·Äî·Ä∫·Äñ·Äº·ÄÖ·Ä∫·Äû·Ää·Ä∫</li>
+        <li>Phone number ·Äô·Äê·Ä≠·ÄØ·ÄÑ·Ä∫·Äô·ÄÆ WhatsApp ·Äô·Äæ ·Ä¶·Ä∏·ÄÖ·ÄΩ·Ä¨ ·ÄÜ·ÄÄ·Ä∫·Äû·ÄΩ·Äö·Ä∫·Äï·Ä´</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <strong>ECC Computer Training Centre</strong><br>
+    New Delhi ¬∑ Digital Training Since 2020<br>
+    Laptop recommendation by <strong>John Hlutea (·ÄÜ·Äõ·Ä¨)</strong>
+  </footer>
+
+</div><!-- /.wrap -->
+
+<!-- WhatsApp FAB -->
+<div class="fab">
+  <div class="fab-pulse"></div>
+  <a href="https://wa.me/917627962162?text=·Äô·ÄÑ·Ä∫·Äπ·ÄÇ·Äú·Ä¨·Äï·Ä´%20·ÄÜ·Äõ·Ä¨%20üôè%0AECC%20Laptop%20Finder%20·Äô·Äæ%20·ÄÜ·ÄÄ·Ä∫·Äû·ÄΩ·Äö·Ä∫·Äî·Ä±·Äï·Ä´·Äû·Ää·Ä∫·Åã%20Laptop%20·Ä°·ÄÄ·Äº·Ä±·Ä¨·ÄÑ·Ä∫·Ä∏·Äô·Ä±·Ä∏·ÄÅ·Äª·ÄÑ·Ä∫·Äï·Ä´·Äê·Äö·Ä∫·Åã"
+     target="_blank" rel="noopener">
+    <button class="fab-btn" title="WhatsApp ·Äô·Äæ ·Äô·Ä±·Ä∏·Äô·Ää·Ä∫">üí¨</button>
+  </a>
+</div>
+
+
+<script>
+// ‚îÄ‚îÄ‚îÄ PRODUCT DATABASE ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ
+// To add/edit products: update this array.
+// status: "ACTIVE" shows publicly. "REVIEW" or "DISABLED" hidden from public.
+const PRODUCTS = [
+  {
+    id: 1,
+    status: "ACTIVE",
+    product_type: "BRAND_NEW_LAPTOP",
+    budget_min: 38000, budget_max: 40000,
+    use_cases: ["basic","online","graphic","home"],
+    product_name: "ASUS Vivobook 15 X1504ZA",
+    brand: "ASUS",
+    processor: "Intel Core i5-1235U (12th Gen)",
+    ram: "8GB DDR4",
+    storage: "512GB NVMe SSD",
+    screen_size: "15.6 inch FHD Anti-Glare",
+    price_range: "‚Çπ38,000 ‚Äì ‚Çπ40,000",
+    product_photo_url: "https://placehold.co/600x360/1a2744/ffffff?text=ASUS+Vivobook+15",
+    product_link: "https://www.amazon.in/s?k=ASUS+Vivobook+15+X1504ZA+i5",
+    store_name: "Amazon India / Croma",
+    location: "Online + Nehru Place, New Delhi",
+    phone_number: null, phone_verified: false,
+    warranty: "1 Year ASUS India Onsite Warranty",
+    risk_note: "Price changes frequently. Check on the day you buy.",
+    saya_note: "·ÄÜ·Äõ·Ä¨·Ä∑ ECC ·ÄÄ·Äª·Ä±·Ä¨·ÄÑ·Ä∫·Ä∏·Äû·Ä¨·Ä∏·Äô·Äª·Ä¨·Ä∏·Ä°·Äê·ÄΩ·ÄÄ·Ä∫ ·Äï·Äë·Äô·ÄÜ·ÄØ·Ä∂·Ä∏ ·Äë·Ä±·Ä¨·ÄÄ·Ä∫·ÄÅ·Ä∂·ÄÅ·Äª·ÄÄ·Ä∫·Äï·Ä±·Ä∏·ÄÅ·Äª·ÄÑ·Ä∫·Äê·Ä≤·Ä∑ model ·Äï·Ä´·Åã Office, Online Class, Canva ·Äî·Ä≤·Ä∑ basic Graphic Design ·Ä°·Äê·ÄΩ·ÄÄ·Ä∫ ·ÄÄ·Ä±·Ä¨·ÄÑ·Ä∫·Ä∏·Äï·Ä´·Äê·Äö·Ä∫·Åã",
+    last_checked: "2026-05-10",
+  },
+  {
+    id: 2,
+    status: "ACTIVE",
+    product_type: "BRAND_NEW_LAPTOP",
+    budget_min: 35000, budget_max: 37000,
+    use_cases: ["basic","online","home"],
+    product_name: "HP 15s (AMD Ryzen 5)",
+    brand: "HP",
+    processor: "AMD Ryzen 5 5500U (6 Core)",
+    ram: "8GB DDR4",
+    storage: "512GB SSD",
+    screen_size: "15.6 inch FHD IPS",
+    price_range: "‚Çπ35,000 ‚Äì ‚Çπ37,000",
+    product_photo_url: "https://placehold.co/600x360/0057b8/ffffff?text=HP+15s",
+    product_link: "https://www.amazon.in/s?k=HP+15s+AMD+Ryzen+5+5500U",
+    store_name: "Amazon India / Flipkart",
+    location: "Online",
+    phone_number: null, phone_verified: false,
+    warranty: "1 Year HP India Onsite Warranty",
+    risk_note: "AMD model ‚Äî good for everyday use, not ideal for Premiere Pro.",
+    saya_note: "Budget ·ÄÄ·Äî·Ä∑·Ä∫·Äû·Äê·Ä∫·ÄÅ·Äª·ÄÑ·Ä∫·Äê·Ä≤·Ä∑ ·ÄÄ·Äª·Ä±·Ä¨·ÄÑ·Ä∫·Ä∏·Äû·Ä¨·Ä∏·Äô·Äª·Ä¨·Ä∏·Ä°·Äê·ÄΩ·ÄÄ·Ä∫ ·ÄÜ·Äõ·Ä¨ ·Äë·Ä±·Ä¨·ÄÄ·Ä∫·ÄÅ·Ä∂·Äï·Ä´·Äê·Äö·Ä∫·Åã Computer Basic, MS Office, Zoom Class ·Ä°·Äê·ÄΩ·ÄÄ·Ä∫ ·ÄÄ·Ä±·Ä¨·ÄÑ·Ä∫·Ä∏·Äô·ÄΩ·Äî·Ä∫·Äï·Ä´·Äê·Äö·Ä∫·Åã",
+    last_checked: "2026-05-10",
+  },
+  {
+    id: 3,
+    status: "ACTIVE",
+    product_type: "BRAND_NEW_LAPTOP",
+    budget_min: 40000, budget_max: 43000,
+    use_cases: ["basic","online","graphic","video","home"],
+    product_name: "Dell Vostro 3440",
+    brand: "Dell",
+    processor: "Intel Core i5-1334U (13th Gen)",
+    ram: "8GB DDR4",
+    storage: "512GB NVMe SSD",
+    screen_size: "14 inch FHD Anti-Glare",
+    price_range: "‚Çπ40,000 ‚Äì ‚Çπ43,000",
+    product_photo_url: "https://placehold.co/600x360/0076CE/ffffff?text=Dell+Vostro+3440",
+    product_link: "https://www.amazon.in/s?k=Dell+Vostro+3440+i5+13th",
+    store_name: "Amazon India / Dell India",
+    location: "Online + Nehru Place, New Delhi",
+    phone_number: null, phone_verified: false,
+    warranty: "1 Year Dell India Onsite Warranty",
+    risk_note: "Business-grade build. Slightly heavier than consumer models.",
+    saya_note: "Graphic Design ·Äî·Ä≤·Ä∑ Video Editing ·Äú·ÄØ·Äï·Ä∫·ÄÅ·Äª·ÄÑ·Ä∫·Äê·Ä≤·Ä∑ ·ÄÄ·Äª·Ä±·Ä¨·ÄÑ·Ä∫·Ä∏·Äû·Ä¨·Ä∏·Äô·Äª·Ä¨·Ä∏·Ä°·Äê·ÄΩ·ÄÄ·Ä∫ ·ÄÜ·Äõ·Ä¨ ·Äí·ÄØ·Äê·Ä≠·Äö ·Äë·Ä±·Ä¨·ÄÄ·Ä∫·ÄÅ·Ä∂·ÄÅ·Äª·ÄÄ·Ä∫·Äï·Ä±·Ä∏·Äê·Ä≤·Ä∑ model ·Äï·Ä´·Åã Build quality ·ÄÄ·Ä±·Ä¨·ÄÑ·Ä∫·Ä∏·Äï·Ä´·Äê·Äö·Ä∫·Åã",
+    last_checked: "2026-05-10",
+  },
+  {
+    id: 4,
+    status: "ACTIVE",
+    product_type: "USED_LAPTOP",
+    budget_min: 25000, budget_max: 32000,
+    use_cases: ["basic","online","home"],
+    product_name: "Lenovo ThinkPad T470 (Refurbished)",
+    brand: "Lenovo",
+    processor: "Intel Core i5-7200U (7th Gen)",
+    ram: "16GB DDR4",
+    storage: "512GB SSD",
+    screen_size: "14 inch FHD IPS",
+    price_range: "‚Çπ25,000 ‚Äì ‚Çπ32,000",
+    product_photo_url: "https://placehold.co/600x360/e8252a/ffffff?text=ThinkPad+T470",
+    product_link: "https://www.amazon.in/s?k=ThinkPad+T470+refurbished+i5",
+    store_name: "Amazon Renewed / Nehru Place",
+    location: "Online + Nehru Place, New Delhi",
+    phone_number: null, phone_verified: false,
+    warranty: "6 Months Seller Warranty (verify before buying)",
+    risk_note: "Refurbished. Always check battery health before buying. Buy from seller with return policy.",
+    saya_note: "Budget ·Äî·Ää·Ä∫·Ä∏·Äï·Äº·ÄÆ·Ä∏ reliable laptop ·Äú·Ä≠·ÄØ·ÄÅ·Äª·ÄÑ·Ä∫·Äê·Ä≤·Ä∑ ·ÄÄ·Äª·Ä±·Ä¨·ÄÑ·Ä∫·Ä∏·Äû·Ä¨·Ä∏·Äô·Äª·Ä¨·Ä∏·Ä°·Äê·ÄΩ·ÄÄ·Ä∫ ·ÄÜ·Äõ·Ä¨ suggest ·Äú·ÄØ·Äï·Ä∫·Äï·Ä´·Äê·Äö·Ä∫·Åã ·Äù·Äö·Ä∫·Äô·Äê·Ä≠·ÄØ·ÄÑ·Ä∫·Äô·ÄÆ battery condition ·ÄÖ·ÄÖ·Ä∫·ÄÜ·Ä±·Ä∏·Äñ·Ä≠·ÄØ·Ä∑ ·Äô·Äô·Ä±·Ä∑·Äï·Ä´·Äî·Ä≤·Ä∑·Äî·Ä±·Ä¨·Ä∫·Åã",
+    last_checked: "2026-05-10",
+  },
+  {
+    id: 5,
+    status: "ACTIVE",
+    product_type: "DESKTOP",
+    budget_min: 25000, budget_max: 35000,
+    use_cases: ["basic","online","graphic","home"],
+    product_name: "Custom Desktop Set (Assembled)",
+    brand: "Intel Assembled",
+    processor: "Intel Core i5-10400 (10th Gen)",
+    ram: "8GB DDR4",
+    storage: "256GB SSD + 1TB HDD",
+    screen_size: "Monitor not included (~‚Çπ6,000‚Äì8,000 extra)",
+    price_range: "‚Çπ25,000 ‚Äì ‚Çπ35,000 (CPU + cabinet)",
+    product_photo_url: "https://placehold.co/600x360/2d3748/ffffff?text=Desktop+Set",
+    product_link: "https://www.amazon.in/s?k=assembled+desktop+i5+10th+gen+8gb",
+    store_name: "Nehru Place Assembled Shops",
+    location: "Nehru Place, New Delhi",
+    phone_number: null, phone_verified: false,
+    warranty: "1 Year Parts Warranty (verify with shop)",
+    risk_note: "Assembled desktop. Not portable. Monitor sold separately. Buy from trusted shop with bill.",
+    saya_note: "·Ä°·Ä≠·Äô·Ä∫·Äô·Äæ·Ä¨ fixed station computer ·Äú·Ä≠·ÄØ·ÄÅ·Äª·ÄÑ·Ä∫·Äê·Ä≤·Ä∑ ·ÄÄ·Äª·Ä±·Ä¨·ÄÑ·Ä∫·Ä∏·Äû·Ä¨·Ä∏·Äô·Äª·Ä¨·Ä∏·Ä°·Äê·ÄΩ·ÄÄ·Ä∫ ·ÄÜ·Äõ·Ä¨ suggest ·Äú·ÄØ·Äï·Ä∫·Äï·Ä´·Äê·Äö·Ä∫·Åã Performance ·ÄÄ·Ä±·Ä¨·ÄÑ·Ä∫·Ä∏·Äï·Äº·ÄÆ·Ä∏ price ·Äû·ÄÑ·Ä∑·Ä∫·Äê·ÄÑ·Ä∑·Ä∫·Äï·Ä´·Äê·Äö·Ä∫·Åã",
+    last_checked: "2026-05-10",
+  },
+];
+
+// ‚îÄ‚îÄ‚îÄ Budget ranges ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ
+const BUDGETS = {
+  "20000-30000": { min: 20000, max: 30000 },
+  "30000-40000": { min: 30000, max: 40000 },
+  "40000-50000": { min: 40000, max: 50000 },
+  "50000+":      { min: 50000, max: Infinity },
+};
+
+// ‚îÄ‚îÄ‚îÄ State ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ
+const state = { budget: null, type: null, usecase: null };
+
+// ‚îÄ‚îÄ‚îÄ Chip toggle logic ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ
+document.querySelectorAll('.chip').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const group = btn.dataset.group;
+    const val   = btn.dataset.val;
+    // Deselect all in same group
+    document.querySelectorAll(`.chip[data-group="${group}"]`).forEach(c => c.classList.remove('on'));
+    // Toggle
+    if (state[group] === val) {
+      state[group] = null;
+    } else {
+      state[group] = val;
+      btn.classList.add('on');
+    }
+    // Hide results when filter changes
+    document.getElementById('resultsSection').classList.add('hidden');
+  });
+});
+
+// ‚îÄ‚îÄ‚îÄ WhatsApp link builder ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ
+function waLink(msg) {
+  return 'https://wa.me/917627962162?text=' + encodeURIComponent(msg);
+}
+
+// ‚îÄ‚îÄ‚îÄ Render product card ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ
+function renderCard(p) {
+  const typeLabel = {
+    BRAND_NEW_LAPTOP: 'Brand New',
+    USED_LAPTOP: 'Used / Refurbished',
+    DESKTOP: 'Desktop',
+  }[p.product_type] || p.product_type;
+
+  const isUsed = p.product_type === 'USED_LAPTOP';
+
+  const askMsg =
+    '·Äô·ÄÑ·Ä∫·Äπ·ÄÇ·Äú·Ä¨·Äï·Ä´ ·ÄÜ·Äõ·Ä¨ üôè\n' +
+    'ECC Laptop Finder ·Äô·Äæ·Äê·ÄÖ·Ä∫·ÄÜ·ÄÑ·Ä∑·Ä∫ ·ÄÜ·ÄÄ·Ä∫·Äû·ÄΩ·Äö·Ä∫·Äî·Ä±·Äï·Ä´·Äû·Ää·Ä∫·Åã\n\n' +
+    'Laptop ·ÄÄ·Ä≠·ÄØ ·Äë·Äï·Ä∫·Äô·Ä±·Ä∏·ÄÅ·Äª·ÄÑ·Ä∫·Äï·Ä´·Äê·Äö·Ä∫:\n' +
+    'üìå ' + p.product_name + '\n' +
+    'üí∞ ' + p.price_range + '\n\n' +
+    '·ÄÄ·Äª·Ä±·Ä∏·Äá·Ä∞·Ä∏·Äï·Äº·ÄØ·Åç ·ÄÜ·ÄÄ·Ä∫·Äû·ÄΩ·Äö·Ä∫·Äï·Ä±·Ä∏·Äï·Ä´ üôè';
+
+  const phoneHtml = p.phone_number
+    ? `<div class="info-row"><span class="i-icon">üìû</span><span class="i-text">${p.phone_number}${!p.phone_verified ? '<span class="verify-note">‚ö†Ô∏è Verify before calling</span>' : ''}</span></div>`
+    : `<div class="info-row"><span class="i-icon">üìû</span><span class="i-text" style="color:var(--muted);font-size:12px">Contact via WhatsApp below</span></div>`;
+
+  const riskHtml = p.risk_note
+    ? `<div class="risk"><span>‚ö†Ô∏è</span><span>${p.risk_note}</span></div>`
+    : '';
+
+  return `
+    <div class="card">
+      <div class="c-img">
+        <img src="${p.product_photo_url}" alt="${p.product_name}"
+          onerror="this.src='https://placehold.co/600x360/1a2744/fff?text=${encodeURIComponent(p.brand)}'" />
+        <div class="c-badges">
+          <span class="b-saya">‚≠ê ·ÄÜ·Äõ·Ä¨ Recommendation</span>
+          <span class="b-type${isUsed ? ' b-used' : ''}">${typeLabel}</span>
+        </div>
+      </div>
+      <div class="c-body">
+        <div class="c-name">${p.product_name}</div>
+        <div class="c-brand">${p.brand}</div>
+        <div class="specs">
+          <div class="spec"><div class="spec-l">Processor</div><div class="spec-v">${p.processor}</div></div>
+          <div class="spec"><div class="spec-l">RAM</div><div class="spec-v">${p.ram}</div></div>
+          <div class="spec"><div class="spec-l">Storage</div><div class="spec-v">${p.storage}</div></div>
+          <div class="spec${p.screen_size ? '' : ' hidden'}"><div class="spec-l">Screen</div><div class="spec-v">${p.screen_size || ''}</div></div>
+        </div>
+        <div class="price-row">
+          <div class="price-val">${p.price_range}</div>
+          <div class="price-note">Price may change ‚Äî<br>check before buying</div>
+        </div>
+        <div class="store">
+          <div class="info-row"><span class="i-icon">üè™</span><span class="i-text"><strong>${p.store_name}</strong></span></div>
+          <div class="info-row"><span class="i-icon">üìç</span><span class="i-text">${p.location}</span></div>
+          ${phoneHtml}
+        </div>
+        <div class="warranty">üõ°Ô∏è ${p.warranty}</div>
+        ${riskHtml}
+        <div class="saya-note">
+          <div class="sn-label">·ÄÜ·Äõ·Ä¨ Recommendation</div>
+          <div class="sn-text">${p.saya_note}</div>
+        </div>
+        <div class="actions">
+          <a href="${p.product_link}" target="_blank" rel="noopener" class="btn-link">üîó Product ·ÄÄ·Äº·Ää·Ä∑·Ä∫·Äô·Ää·Ä∫</a>
+          <a href="${waLink(askMsg)}" target="_blank" rel="noopener" class="btn-wa">üí¨ ·ÄÜ·Äõ·Ä¨·Ä∑ ·Äô·Ä±·Ä∏·Äô·Ää·Ä∫</a>
+        </div>
+        <div class="c-date">Last checked: ${p.last_checked}</div>
+      </div>
+    </div>`;
+}
+
+// ‚îÄ‚îÄ‚îÄ Show results ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ
+function showResults() {
+  const budgetRange = state.budget ? BUDGETS[state.budget] : null;
+
+  const matches = PRODUCTS.filter(p => {
+    if (p.status !== 'ACTIVE') return false;
+    if (budgetRange) {
+      if (p.budget_max < budgetRange.min || p.budget_min > budgetRange.max) return false;
+    }
+    if (state.type && p.product_type !== state.type) return false;
+    if (state.usecase && !p.use_cases.includes(state.usecase)) return false;
+    return true;
+  });
+
+  const section = document.getElementById('resultsSection');
+  section.classList.remove('hidden');
+
+  if (matches.length === 0) {
+    const askMsg =
+      '·Äô·ÄÑ·Ä∫·Äπ·ÄÇ·Äú·Ä¨·Äï·Ä´ ·ÄÜ·Äõ·Ä¨ üôè\n' +
+      'ECC Laptop Finder ·Äô·Äæ ·ÄÜ·ÄÄ·Ä∫·Äû·ÄΩ·Äö·Ä∫·Äî·Ä±·Äï·Ä´·Äû·Ää·Ä∫·Åã\n\n' +
+      (state.budget ? 'üí∞ Budget: ' + state.budget + '\n' : '') +
+      (state.type ? 'üíª Type: ' + state.type + '\n' : '') +
+      (state.usecase ? 'üìå Use Case: ' + state.usecase + '\n' : '') +
+      '\n·ÄÜ·Äõ·Ä¨·Ä∑ recommendation ·Äë·Äï·Ä∫·Äô·Ä±·Ä∏·ÄÅ·Äª·ÄÑ·Ä∫·Äï·Ä´·Äê·Äö·Ä∫ üôè';
+
+    section.innerHTML = `
+      <div class="no-res">
+        <div class="no-res-icon">üîç</div>
+        <div class="no-res-t">·Äõ·Äæ·Ä¨·Äô·Äê·ÄΩ·Ä±·Ä∑·Äû·Ä±·Ä∏·Äï·Ä´</div>
+        <div class="no-res-p">·Äí·ÄÆ budget/use case ·Ä°·Äê·ÄΩ·ÄÄ·Ä∫ ·ÄÜ·Äõ·Ä¨ ·ÄÖ·ÄÖ·Ä∫·ÄÜ·Ä±·Ä∏·Äî·Ä±·ÄÜ·Ä≤·Äï·Ä´·Åã<br>WhatsApp ·Äô·Äæ·Ä¨ ·ÄÜ·ÄÄ·Ä∫·Äô·Ä±·Ä∏·Äï·Ä±·Ä∏·Äï·Ä´·Äî·Ä±·Ä¨·Ä∫·Åã</div>
+        <a href="${waLink(askMsg)}" target="_blank" rel="noopener" class="btn-wa-lg">üí¨ ·ÄÜ·Äõ·Ä¨·Ä∑·ÄÄ·Ä≠·ÄØ WhatsApp ·Äô·Äæ·Ä¨ ·Äô·Ä±·Ä∏·Äô·Ää·Ä∫</a>
+      </div>`;
+  } else {
+    section.innerHTML = `
+      <div class="r-header">
+        <div class="r-title">·ÄÜ·Äõ·Ä¨·Ä∑ Recommendation</div>
+        <div class="r-count">${matches.length} product${matches.length !== 1 ? 's' : ''}</div>
+      </div>
+      ${matches.map(renderCard).join('')}`;
+  }
+
+  section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+</script>
+
+</body>
+</html>
